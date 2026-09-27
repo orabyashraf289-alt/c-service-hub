@@ -40,8 +40,10 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 import { StateNotice } from "@/components/StateNotice";
-import { caseArabic, dashboardCases as cases, dashboardFilterTabs as filterTabs, dashboardQueues as queueRows, navArabic as navTranslations, queueArabic } from "@/domain";
+import { caseArabic, dashboardCases as cases, dashboardFilterTabs as filterTabs, dashboardQueues as queueRows, queueArabic } from "@/domain";
+import { experienceArabic, navArabic as navTranslations, t, type Locale } from "@/lib/i18n";
 
 const navSections: { label: string; items: { name: string; icon: LucideIcon; count?: string; active?: boolean }[] }[] = [
   {
@@ -107,17 +109,13 @@ function AppMark() {
 
 export default function Home() {
   const [activeNav, setActiveNav] = useState("Overview");
+  const [, setLocation] = useLocation();
   const [activeFilter, setActiveFilter] = useState("All cases");
   const [experience, setExperience] = useState("command");
   const [isArabic, setIsArabic] = useState(false);
   const [languageSwitching, setLanguageSwitching] = useState(false);
-  const tx = (en: string, ar: string) => (isArabic ? ar : en);
-  const experienceArabic: Record<string, { label: string; kicker: string; headline: string; description: string; tags: string[] }> = {
-    command: { label: "مركز القيادة", kicker: "الإدارة", headline: "شاهد الصورة التشغيلية كاملة في لمحة.", description: "صحة المحفظة، مخاطر SLA، الحوادث الكبرى، وإشارات العملاء لقادة الخدمة.", tags: ["صحة المحفظة", "SLA والتصعيد", "قيادة الحوادث"] },
-    customer: { label: "بوابة العميل", kicker: "خارجي", headline: "ساعد العملاء للوصول إلى الخدمة الصحيحة أسرع.", description: "واجهة هادئة وموجهة لطرح الأسئلة وتتبع الطلبات ومعرفة حالة الخدمة.", tags: ["اسأل / ابحث", "طلباتي", "حالة الخدمة"] },
-    agent: { label: "مساحة الموظف", kicker: "العمليات", headline: "ضع الأعمال ذات الأولوية قبل الرسوم البيانية.", description: "مساحة مركزة لإدارة القوائم ومخاطر SLA وردود العملاء والخطوة التالية.", tags: ["أعمالي ذات الأولوية", "طرق عرض القوائم", "سياق الحالة"] },
-    admin: { label: "الإدارة", kicker: "المنصة", headline: "اضبط نظام تشغيل الخدمة بالكامل.", description: "أدر الجهات والمؤسسات والأدوار والنماذج وسير العمل والتوجيه والتدقيق.", tags: ["إعداد الجهة", "منشئ سير العمل", "التدقيق والصلاحيات"] },
-  };
+  const locale: Locale = isArabic ? "ar" : "en";
+  const tx = (en: string, ar: string) => t(locale, en, ar);
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -162,6 +160,10 @@ export default function Home() {
   const selectNav = (name: string) => {
     setActiveNav(name);
     setMobileOpen(false);
+    if (name === "Case workspace") {
+      setLocation("/cases");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 

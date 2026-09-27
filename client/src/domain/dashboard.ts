@@ -72,20 +72,3 @@ export const caseArabic: Record<string, LocalizedCaseCopy> = {
   "PRB-2026-000302": { title: "تكرار مهلة SSO في أوقات الذروة الصباحية", tenant: "جامعة الزهراء", type: "مشكلة", state: "تحليل السبب الجذري", owner: "هالة ر.", age: "منذ ساعتين", channel: "دعم المؤسسات" },
 };
 
-export const navArabic: Record<string, string> = {
-  "Control room": "غرفة التحكم",
-  "Service operations": "عمليات الخدمة",
-  Platform: "المنصة",
-  Overview: "نظرة عامة",
-  "Case workspace": "مساحة الحالات",
-  "Major incidents": "الحوادث الكبرى",
-  "Customer health": "صحة العملاء",
-  "Service catalog": "كتالوج الخدمات",
-  "Queues & routing": "قوائم الانتظار والتوجيه",
-  "SLA & escalations": "اتفاقيات الخدمة والتصعيد",
-  "Knowledge base": "قاعدة المعرفة",
-  Organizations: "الجهات",
-  "Team & access": "الفريق والصلاحيات",
-  Automation: "الأتمتة",
-  "Audit log": "سجل التدقيق",
-};
