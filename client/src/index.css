@@ -130,6 +130,15 @@ kbd { display: inline-flex; align-items: center; gap: 2px; color: #96a7ad; backg
 .app-shell[dir="rtl"] .sidebar { order: 2; }
 .app-shell[dir="rtl"] .main-canvas { order: 1; }
 .app-shell[dir="rtl"] .metric-foot svg { margin-left: 0; margin-right: auto; }
+.app-shell .main-canvas, .app-shell .sidebar { transition: transform .32s cubic-bezier(.23,1,.32,1), opacity .22s ease; }
+.app-shell.language-switching .main-canvas { opacity: .7; transform: translateY(5px); }
+.app-shell.language-switching .sidebar { opacity: .82; transform: translateX(5px); }
+.app-shell[dir="rtl"].language-switching .sidebar { transform: translateX(-5px); }
+.app-shell[dir="rtl"] .main-canvas { text-align: right; }
+.app-shell[dir="rtl"] .topbar, .app-shell[dir="rtl"] .content-wrap { direction: rtl; }
+.app-shell[dir="rtl"] .global-search { text-align: right; }
+.app-shell[dir="rtl"] .metric-foot { flex-direction: row-reverse; }
+@media (prefers-reduced-motion: reduce) { .app-shell .main-canvas, .app-shell .sidebar { transition: none; } }
 .user-mini { display: flex; align-items: center; gap: 7px; color: #6d8188; background: transparent; cursor: pointer; }
 .user-mini span { width: 27px; height: 27px; font-size: 9px; }
 .notification-popover { position: absolute; right: -30px; top: 43px; width: 300px; background: #fff; border: 1px solid #dfe9ea; box-shadow: 0 18px 45px rgba(13, 50, 66, .15); border-radius: 12px; padding: 14px; z-index: 50; animation: pop-in .18s var(--ease-out, ease-out); }
