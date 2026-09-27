@@ -22,3 +22,9 @@ Locale behavior is being moved into `client/src/lib/i18n.ts`. The new helper exp
 The Customer Portal and Agent Workspace now have dedicated routes and share one reusable experience-page implementation. The customer route focuses on guided service discovery, service-intake paths, and request history. The agent route focuses on priority work, SLA watch, resolution counts, queue balance, and a Copilot summary entry point.
 
 Both routes use the same domain cases, locale helper, Arabic translations, preview-only action messaging, responsive layout rules, and RTL/LTR direction. They intentionally stop short of persistence, customer identity, agent permissions, or live routing because those require the future API and authorization phases.
+
+## 11. Incremental delivery: detail tabs and administration
+
+Case Workspace now includes localized Activity, Attachments, and Approvals tabs. Activity keeps the current timeline and reply affordance; Attachments and Approvals provide explicit, useful preview states until storage and approval APIs exist.
+
+Administration now has a dedicated route with tenant configuration, organization hierarchy, service catalog, workflow controls, SLA policies, team roles, and audit readiness. The screen is intentionally a safe read-oriented preview: mutation actions surface the next API/permissions phase rather than pretending to persist changes.
