@@ -16,3 +16,9 @@ The next step is to extract the remaining visual data (metrics and experience me
 The first navigable vertical slice is now available at the `/cases` route. It uses the shared dashboard case contracts, supports case search and queue filters, keeps a selected case detail panel visible for triage, and includes an activity timeline with explicit preview-only messaging for actions that still require an API. The existing dashboard navigation now opens this route instead of showing only a placeholder toast.
 
 Locale behavior is being moved into `client/src/lib/i18n.ts`. The new helper exposes a typed locale, a small `t` function, shared navigation copy, experience copy, and reusable case type/state translations. This keeps the current UI stable while making future pages use the same Arabic/English vocabulary.
+
+## 10. Incremental delivery: customer and agent experiences
+
+The Customer Portal and Agent Workspace now have dedicated routes and share one reusable experience-page implementation. The customer route focuses on guided service discovery, service-intake paths, and request history. The agent route focuses on priority work, SLA watch, resolution counts, queue balance, and a Copilot summary entry point.
+
+Both routes use the same domain cases, locale helper, Arabic translations, preview-only action messaging, responsive layout rules, and RTL/LTR direction. They intentionally stop short of persistence, customer identity, agent permissions, or live routing because those require the future API and authorization phases.
