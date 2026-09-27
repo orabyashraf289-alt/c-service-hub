@@ -95,6 +95,13 @@ const cases = [
 
 const filterTabs = ["All cases", "My queue", "At risk", "Major incidents"];
 
+const experienceModes = [
+  { id: "command", label: "Command Center", kicker: "Management", icon: Gauge, headline: "See the operating picture at a glance.", description: "Portfolio health, SLA exposure, major incidents, and customer signals for service leaders.", tags: ["Portfolio health", "SLA & escalation", "Incident command"] },
+  { id: "customer", label: "Customer Portal", kicker: "External", icon: LifeBuoy, headline: "Help customers reach the right service faster.", description: "A calm, guided front door for asking questions, tracking requests, and seeing service status.", tags: ["Ask / search", "My requests", "Service status"] },
+  { id: "agent", label: "Agent Workspace", kicker: "Operations", icon: TicketCheck, headline: "Put priority work before charts.", description: "A focused workspace for queue ownership, SLA risk, customer replies, and next actions.", tags: ["My priority work", "Queue views", "Case context"] },
+  { id: "admin", label: "Administration", kicker: "Platform", icon: Settings2, headline: "Configure the service operating system.", description: "Govern tenants, organizations, roles, forms, workflows, routing, and audit controls.", tags: ["Tenant setup", "Workflow builder", "Audit & access"] },
+];
+
 function SparkBars({ values, color }: { values: number[]; color: string }) {
   return (
     <div className="metric-bars" aria-hidden="true">
@@ -116,6 +123,7 @@ function AppMark() {
 export default function Home() {
   const [activeNav, setActiveNav] = useState("Overview");
   const [activeFilter, setActiveFilter] = useState("All cases");
+  const [experience, setExperience] = useState("command");
   const [query, setQuery] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -221,7 +229,13 @@ export default function Home() {
         <div className="content-wrap">
           <section className="page-heading animate-in"><div><span className="eyebrow">Monday · 28 September 2026 · 08:42 UTC</span><h1>Good morning, Sarah.</h1><p>Here’s the operating picture across your service portfolio.</p></div><div className="heading-actions"><button className="secondary-button" onClick={() => toast("Date range selector is ready for live data.")}><CalendarDays size={16} /> Last 30 days <ChevronDown size={14} /></button><button className="primary-button" onClick={() => setNewCaseOpen(true)}><Plus size={17} /> New case</button></div></section>
 
-          <section className="metric-grid animate-in delay-1" aria-label="Key performance indicators">
+          <section className="experience-strip animate-in delay-1" aria-label="C-Service Hub experiences">
+            <div className="experience-strip-head"><div><span className="eyebrow">Experience switcher</span><strong>One case engine. Four ways to work.</strong></div><span className="experience-note">Choose a role to preview its home experience</span></div>
+            <div className="experience-tabs">{experienceModes.map((mode) => { const Icon = mode.icon; return <button key={mode.id} className={`experience-tab ${experience === mode.id ? "experience-tab-active" : ""}`} onClick={() => { setExperience(mode.id); toast(`${mode.label} preview selected.`); }}><span className="experience-tab-icon"><Icon size={15} /></span><span><strong>{mode.label}</strong><small>{mode.kicker}</small></span>{experience === mode.id && <CheckCircle2 className="experience-check" size={15} />}</button>; })}</div>
+            {(() => { const selected = experienceModes.find((mode) => mode.id === experience) ?? experienceModes[0]; const PreviewIcon = selected.icon; return <div className={`experience-preview experience-preview-${selected.id}`}><div className="experience-preview-icon"><PreviewIcon size={18} /></div><div className="experience-preview-copy"><span className="eyebrow">{selected.kicker} experience</span><strong>{selected.headline}</strong><p>{selected.description}</p></div><div className="experience-preview-tags">{selected.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>{selected.id === "customer" ? <button className="experience-action" onClick={() => setNewCaseOpen(true)}>Open guided intake <ArrowUpRight size={14} /></button> : <button className="experience-action" onClick={() => toast(`${selected.label} workspace is ready for the next build step.`)}>Explore workspace <ArrowUpRight size={14} /></button>}</div>; })()}
+          </section>
+
+          <section className="metric-grid animate-in delay-2" aria-label="Key performance indicators">
             {metricCards.map((metric) => { const Icon = metric.icon; const palette = { teal: { icon: "#18b9a5", soft: "rgba(24,185,165,.11)" }, amber: { icon: "#e3a538", soft: "rgba(227,165,56,.13)" }, blue: { icon: "#6c7cff", soft: "rgba(108,124,255,.12)" }, violet: { icon: "#b276dc", soft: "rgba(178,118,220,.12)" } }[metric.color as "teal" | "amber" | "blue" | "violet"]; return <article className="metric-card" key={metric.label}><div className="metric-card-top"><div className="metric-icon" style={{ color: palette.icon, background: palette.soft }}><Icon size={17} /></div><button className="quiet-menu" aria-label={`More about ${metric.label}`}><MoreHorizontal size={16} /></button></div><div className="metric-value-row"><div><span>{metric.label}</span><strong>{metric.value}</strong></div><SparkBars values={metric.bars} color={palette.icon} /></div><div className="metric-foot"><span className="metric-delta" style={{ color: palette.icon }}>{metric.delta}</span><span>{metric.note}</span><ArrowUpRight size={13} /></div></article>; })}
           </section>
 
