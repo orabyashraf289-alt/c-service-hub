@@ -303,6 +303,17 @@ kbd { display: inline-flex; align-items: center; gap: 2px; color: #96a7ad; backg
 .bottom-insight p { margin: 4px 0 0; color: #719097; font-size: 9px; line-height: 1.4; }
 .bottom-insight .secondary-button { height: 30px; font-size: 9px; background: rgba(255,255,255,.7); }
 .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 180px; color: #96a7ab; }.empty-state svg { color: #9bc6c1; }.empty-state strong { color: #57717a; font-size: 11px; }.empty-state span { font-size: 9px; }
+.state-notice { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 180px; padding: 24px; text-align: center; color: #81969d; }
+.state-notice-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: #2a9c90; background: #e9f8f4; }
+.state-notice strong { color: #4f6d77; font-size: 12px; }
+.state-notice > span:not(.state-notice-icon) { max-width: 260px; color: #91a3a8; font-size: 10px; line-height: 1.45; }
+.state-notice-error .state-notice-icon { color: #c95f70; background: #fff0f1; }
+.state-notice-permission .state-notice-icon { color: #6b75c8; background: #eef0ff; }
+.state-notice-loading .state-notice-icon { color: #4e8492; background: #eaf5f6; }
+.state-notice-spin { animation: state-spin .85s linear infinite; }
+@keyframes state-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .state-notice-spin { animation: none; } }
+
 .modal-backdrop { position: fixed; inset: 0; z-index: 80; background: rgba(9, 31, 43, .48); display: grid; place-items: center; padding: 20px; backdrop-filter: blur(5px); }
 .new-case-modal { width: min(530px, 100%); background: #fff; border-radius: 14px; box-shadow: 0 25px 80px rgba(4, 27, 38, .25); animation: modal-in .22s var(--ease-out, ease-out); overflow: hidden; }
 .modal-header { align-items: flex-start; justify-content: space-between; padding: 24px 24px 18px; border-bottom: 1px solid #edf2f2; }.modal-header h2 { color: #173d4e; font-size: 20px; letter-spacing: -.04em; margin: 7px 0 6px; }.modal-header p { color: #81949b; font-size: 11px; margin: 0; }.modal-header .icon-button { color: #7e959b; }
