@@ -83,3 +83,9 @@ The adapter is deliberately not wired as persistence and is not a server securit
 Case Workspace now reads its preview records through the tenant-scoped `CaseRepository` contract, including an explicit localized loading state and query-driven repository call. The visual case rows remain presentation projections of the normalized contract records until a server adapter replaces the in-memory source.
 
 Workflow and SLA preview contracts now live in `client/src/platform/orchestration.ts`, with published-workflow filtering, tenant scope, and SLA permission checks covered by tests. These contracts prepare the next backend phase without claiming persistence or server-side enforcement.
+
+## 18. Phase 1 foundation: workflow and SLA UI integration
+
+Workflow Builder now consumes the preview orchestration contracts for published workflow version and P1 SLA escalation timing. It renders a localized loading state while the contracts resolve and then displays the contract-backed values in the header and SLA policy card. Existing draft editing remains local preview state, while publish/save controls continue to communicate that API persistence is not yet connected.
+
+The automation route was smoke-tested after the integration. The full contract suite remains green at 11 tests, and TypeScript plus production build complete successfully.
