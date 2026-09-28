@@ -168,6 +168,10 @@ export default function Home() {
       setLocation("/automation");
       return;
     }
+    if (name === "SLA & escalations") {
+      setLocation("/sla");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 

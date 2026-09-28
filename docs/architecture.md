@@ -89,3 +89,9 @@ Workflow and SLA preview contracts now live in `client/src/platform/orchestratio
 Workflow Builder now consumes the preview orchestration contracts for published workflow version and P1 SLA escalation timing. It renders a localized loading state while the contracts resolve and then displays the contract-backed values in the header and SLA policy card. Existing draft editing remains local preview state, while publish/save controls continue to communicate that API persistence is not yet connected.
 
 The automation route was smoke-tested after the integration. The full contract suite remains green at 11 tests, and TypeScript plus production build complete successfully.
+
+## 19. Phase 1 foundation: SLA and escalation workspace
+
+Added a dedicated bilingual `/sla` workspace backed by the tenant-scoped SLA repository contract. The page renders active policy cards, first-response/escalation/resolution timers, a P1 escalation window, loading state, empty state, and an explicit permission-denied state using the shared `StateNotice` primitive. A permission-preview control makes the negative path demonstrable without claiming real authentication.
+
+The dashboard SLA navigation now routes to this workspace. The browser smoke check verified normal policy rendering and the permission-denied state. The static implementation remains preview-only; policy creation and editing are intentionally surfaced as next-phase API actions.

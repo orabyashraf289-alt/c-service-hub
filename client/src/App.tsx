@@ -7,6 +7,7 @@ import CaseWorkspace from "./pages/CaseWorkspace";
 import Administration from "./pages/Administration";
 import ExperienceWorkspace from "./pages/ExperienceWorkspace";
 import WorkflowBuilder from "./pages/WorkflowBuilder";
+import SlaWorkspace from "./pages/SlaWorkspace";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/agent">{() => <ExperienceWorkspace mode="agent" />}</Route>
       <Route path="/admin" component={Administration} />
       <Route path="/automation" component={WorkflowBuilder} />
+      <Route path="/sla" component={SlaWorkspace} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
