@@ -65,3 +65,9 @@ The first Phase 1 slice adds a typed platform boundary without pretending that a
 The supporting architecture documents are now available at `docs/architecture/api-contracts.md`, `docs/architecture/data-model.md`, and `docs/architecture/security-model.md`. They define the contract and guardrails for the future modular monolith, PostgreSQL migrations, tenant isolation, audit stream, outbox, attachment security, and authorization pipeline. The existing domain export boundary was intentionally left unchanged after validation to avoid coupling platform contracts to presentation-domain inference.
 
 This remains a foundation contract only. No authentication, database, API endpoint, permission enforcement, or persistence claim is made in the static project.
+
+## 15. Phase 1 foundation: automated contract tests
+
+The project now has an explicit Vitest quality gate via `pnpm test` and `pnpm test:watch`. The initial suite in `client/src/platform/platform.test.ts` covers same-tenant access, cross-tenant rejection, permission denial, API metadata, success unwrapping, and stable localized API errors. `docs/architecture/testing-strategy.md` defines the path from these pure contract tests to repository, migration, browser, security, and load-test gates.
+
+These tests validate frontend contract helpers only. Server-side identity, authorization middleware, database transactions, and tenant predicates remain Phase 1 implementation work for the future backend.
