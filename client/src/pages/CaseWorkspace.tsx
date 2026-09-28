@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, ChevronDown, Clock3, FileText, Filter, LifeBuoy, MessageSquare, Radio, Search, ShieldCheck, Sparkles, UserRound, X } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { caseArabic, dashboardCases } from "@/domain";
 import { caseStateArabic, caseTypeArabic, t, type Locale } from "@/lib/i18n";
 import { StateNotice } from "@/components/StateNotice";
+import type { CaseSummary, TenantContext } from "@/platform/contracts";
+import { InMemoryCaseRepository } from "@/platform/repository";
 
 const tabs = ["All cases", "My queue", "At risk", "Major incidents"] as const;
 
@@ -17,25 +19,48 @@ function caseIcon(type: string) {
   return <MessageSquare size={16} />;
 }
 
+const previewTenantContext: TenantContext = { tenantId: "tenant-classera", tenantSlug: "classera", organizationId: "org-global", userId: "user-sarah", locale: "en", timezone: "Asia/Riyadh", permissions: ["cases.read"], securityClassification: "internal" };
+const previewRepository = new InMemoryCaseRepository(dashboardCases.map((item): CaseSummary => ({ id: item.id, caseNumber: item.id, tenantId: "tenant-classera", title: item.title, type: item.type === "Major incident" ? "incident" : item.type === "Service request" ? "service_request" : item.type.toLowerCase() as CaseSummary["type"], status: item.state === "Awaiting vendor" ? "waiting" : item.state === "Scheduled" ? "new" : "in_progress", priority: item.tag.toLowerCase() as CaseSummary["priority"], createdAt: "2026-09-28T00:00:00Z", updatedAt: "2026-09-28T00:00:00Z", securityClassification: "internal" })));
+
 export default function CaseWorkspace() {
   const [locale, setLocale] = useState<Locale>("en");
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("All cases");
   const [query, setQuery] = useState("");
+  const [workspaceCases, setWorkspaceCases] = useState<typeof dashboardCases>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedId, setSelectedId] = useState(dashboardCases[0].id);
   const [detailTab, setDetailTab] = useState<"activity" | "attachments" | "approvals">("activity");
   const isArabic = locale === "ar";
   const tx = (english: string, arabic: string) => t(locale, english, arabic);
-  const selected = dashboardCases.find((item) => item.id === selectedId) ?? dashboardCases[0];
+  const selected = workspaceCases.find((item) => item.id === selectedId) ?? workspaceCases[0] ?? dashboardCases[0];
   const selectedCopy = isArabic ? caseArabic[selected.id] : { title: selected.title, tenant: selected.tenant, type: selected.type, state: selected.state, owner: selected.owner, age: selected.age, channel: selected.type === "Major incident" ? "Government hierarchy" : "Enterprise support" };
 
   const visibleCases = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return dashboardCases.filter((item) => {
+    return workspaceCases.filter((item) => {
       const matchesQuery = !normalized || [item.id, item.title, item.tenant, item.type, item.state].some((field) => field.toLowerCase().includes(normalized));
       const matchesTab = activeTab === "All cases" || (activeTab === "At risk" && item.risk) || (activeTab === "Major incidents" && item.type === "Major incident") || (activeTab === "My queue" && ["Nadia K.", "Omar T.", "Hala R."].includes(item.owner));
       return matchesQuery && matchesTab;
     });
-  }, [activeTab, query]);
+  }, [activeTab, query, workspaceCases]);
+
+  useEffect(() => {
+    let active = true;
+    setIsLoading(true);
+    previewRepository.list({ ...previewTenantContext, locale }, { search: query, limit: 100 }).then((result) => {
+      if (!active) return;
+      if (!result.ok) {
+        setWorkspaceCases([]);
+        setIsLoading(false);
+        return;
+      }
+      const records = result.data.items.map((record) => dashboardCases.find((item) => item.id === record.id)).filter((item): item is (typeof dashboardCases)[number] => Boolean(item));
+      setWorkspaceCases(records);
+      setSelectedId((current) => records.some((item) => item.id === current) ? current : records[0]?.id ?? "");
+      setIsLoading(false);
+    });
+    return () => { active = false; };
+  }, [locale, query]);
 
   const toggleLocale = () => setLocale((value) => value === "en" ? "ar" : "en");
 
@@ -57,7 +82,7 @@ export default function CaseWorkspace() {
           <article className="workspace-list-panel">
             <div className="workspace-panel-heading"><div><span className="eyebrow">{tx("Triage stream", "مسار الفرز")}</span><h2>{tx("Live case queue", "قائمة الحالات المباشرة")}</h2></div><div className="workspace-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={tx("Search cases…", "ابحث في الحالات…")} /></div></div>
             <div className="workspace-tabs">{tabs.map((tab) => <button key={tab} className={activeTab === tab ? "workspace-tab-active" : ""} onClick={() => setActiveTab(tab)}>{isArabic ? tabCopy[tab] : tab}{tab === "At risk" && <span>12</span>}</button>)}</div>
-            {visibleCases.length ? <div className="workspace-case-list">{visibleCases.map((item) => { const copy = isArabic ? caseArabic[item.id] : { title: item.title, tenant: item.tenant, type: item.type, state: item.state, owner: item.owner, age: item.age, channel: item.type === "Major incident" ? "Government hierarchy" : "Enterprise support" }; return <button className={`workspace-case-row ${selected.id === item.id ? "workspace-case-row-active" : ""}`} key={item.id} onClick={() => setSelectedId(item.id)}><span className={`workspace-case-icon ${item.risk ? "workspace-case-icon-risk" : ""}`}>{caseIcon(item.type)}</span><span className="workspace-case-row-copy"><strong>{copy.title}</strong><small>{item.id} · {isArabic ? caseTypeArabic[item.type] : item.type} · {copy.tenant}</small></span><span className={`workspace-case-state ${item.risk ? "workspace-state-risk" : ""}`}>{isArabic ? caseStateArabic[item.state] : item.state}</span><span className="workspace-case-age">{copy.age}</span></button>; })}</div> : <StateNotice kind="empty" title={tx("No cases match this view", "لا توجد حالات مطابقة")} description={tx("Try a different filter or search term.", "جرّب فلترًا أو عبارة بحث مختلفة.")} />}
+            {isLoading ? <StateNotice kind="loading" title={tx("Loading cases", "جارٍ تحميل الحالات")} description={tx("Applying tenant scope and queue filters.", "يتم تطبيق نطاق الجهة وفلاتر القائمة.")} /> : visibleCases.length ? <div className="workspace-case-list">{visibleCases.map((item) => { const copy = isArabic ? caseArabic[item.id] : { title: item.title, tenant: item.tenant, type: item.type, state: item.state, owner: item.owner, age: item.age, channel: item.type === "Major incident" ? "Government hierarchy" : "Enterprise support" }; return <button className={`workspace-case-row ${selected.id === item.id ? "workspace-case-row-active" : ""}`} key={item.id} onClick={() => setSelectedId(item.id)}><span className={`workspace-case-icon ${item.risk ? "workspace-case-icon-risk" : ""}`}>{caseIcon(item.type)}</span><span className="workspace-case-row-copy"><strong>{copy.title}</strong><small>{item.id} · {isArabic ? caseTypeArabic[item.type] : item.type} · {copy.tenant}</small></span><span className={`workspace-case-state ${item.risk ? "workspace-state-risk" : ""}`}>{isArabic ? caseStateArabic[item.state] : item.state}</span><span className="workspace-case-age">{copy.age}</span></button>; })}</div> : <StateNotice kind="empty" title={tx("No cases match this view", "لا توجد حالات مطابقة")} description={tx("Try a different filter or search term.", "جرّب فلترًا أو عبارة بحث مختلفة.")} />}
           </article>
           <aside className="workspace-detail-panel">
             <div className="workspace-detail-heading"><div><span className="eyebrow">{tx("Case detail", "تفاصيل الحالة")}</span><h2>{selected.id}</h2></div><button className="workspace-close" onClick={() => toast(tx("Detail panel stays pinned for triage.", "تبقى لوحة التفاصيل مثبتة أثناء الفرز."))}><X size={16} /></button></div>

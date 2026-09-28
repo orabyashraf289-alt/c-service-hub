@@ -77,3 +77,9 @@ These tests validate frontend contract helpers only. Server-side identity, autho
 A first `CaseRepository` contract now sits beside the platform API types. The preview `InMemoryCaseRepository` supports bounded case listing, cursor pagination, filters, and case lookup while applying tenant scope before returning data. Cross-tenant or missing cases use the same not-found error shape to avoid resource enumeration.
 
 The adapter is deliberately not wired as persistence and is not a server security boundary. `docs/architecture/repository-adapters.md` records the contract that a future PostgreSQL repository must preserve, including indexed tenant predicates, organization policy checks, classification filters, transactions, and concurrency controls.
+
+## 17. Phase 1 foundation: integrated read boundaries
+
+Case Workspace now reads its preview records through the tenant-scoped `CaseRepository` contract, including an explicit localized loading state and query-driven repository call. The visual case rows remain presentation projections of the normalized contract records until a server adapter replaces the in-memory source.
+
+Workflow and SLA preview contracts now live in `client/src/platform/orchestration.ts`, with published-workflow filtering, tenant scope, and SLA permission checks covered by tests. These contracts prepare the next backend phase without claiming persistence or server-side enforcement.

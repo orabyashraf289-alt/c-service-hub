@@ -3,6 +3,7 @@ import { createApiMeta, failureResult, unwrapApiResult } from "./errors";
 import type { TenantContext } from "./contracts";
 import { assertTenantScope, canAccess, requirePermission } from "./tenant";
 import { InMemoryCaseRepository } from "./repository";
+import { InMemoryOrchestrationRepository } from "./orchestration";
 
 const context: TenantContext = {
   tenantId: "tenant-classera",
@@ -83,5 +84,29 @@ describe("case repository contract", () => {
       expect(secondPage.ok).toBe(true);
       if (secondPage.ok) expect(secondPage.data.items[0]?.id).toBe("case-2");
     }
+  });
+});
+
+describe("workflow and SLA repository contracts", () => {
+  const repository = new InMemoryOrchestrationRepository([
+    { id: "wf-1", workflowId: "workflow-incident", tenantId: "tenant-classera", version: 2, status: "published", nodes: [], createdBy: "user-sarah", createdAt: "2026-09-28T00:00:00Z", publishedAt: "2026-09-28T00:00:00Z" },
+    { id: "wf-other", workflowId: "workflow-other", tenantId: "tenant-other", version: 1, status: "published", nodes: [], createdBy: "user-other", createdAt: "2026-09-28T00:00:00Z" },
+  ], [
+    { id: "sla-1", tenantId: "tenant-classera", name: "P1 response", priority: "p1", firstResponseMinutes: 15, resolutionMinutes: 240, escalationMinutes: 30 },
+    { id: "sla-other", tenantId: "tenant-other", name: "Other SLA", priority: "p1", firstResponseMinutes: 10, resolutionMinutes: 60, escalationMinutes: 15 },
+  ]);
+
+  it("returns only published workflows inside the active tenant", async () => {
+    const result = await repository.listPublished(context);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["wf-1"]);
+  });
+
+  it("requires SLA permission and tenant scope", async () => {
+    const result = await repository.list({ ...context, permissions: ["cases.read"] });
+    expect(result).toMatchObject({ ok: false, error: { code: "SLA_FORBIDDEN" } });
+    const allowed = await repository.list({ ...context, permissions: ["sla.read"] });
+    expect(allowed.ok).toBe(true);
+    if (allowed.ok) expect(allowed.data.map((item) => item.id)).toEqual(["sla-1"]);
   });
 });
