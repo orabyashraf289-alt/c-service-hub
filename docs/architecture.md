@@ -71,3 +71,9 @@ This remains a foundation contract only. No authentication, database, API endpoi
 The project now has an explicit Vitest quality gate via `pnpm test` and `pnpm test:watch`. The initial suite in `client/src/platform/platform.test.ts` covers same-tenant access, cross-tenant rejection, permission denial, API metadata, success unwrapping, and stable localized API errors. `docs/architecture/testing-strategy.md` defines the path from these pure contract tests to repository, migration, browser, security, and load-test gates.
 
 These tests validate frontend contract helpers only. Server-side identity, authorization middleware, database transactions, and tenant predicates remain Phase 1 implementation work for the future backend.
+
+## 16. Phase 1 foundation: repository adapter boundary
+
+A first `CaseRepository` contract now sits beside the platform API types. The preview `InMemoryCaseRepository` supports bounded case listing, cursor pagination, filters, and case lookup while applying tenant scope before returning data. Cross-tenant or missing cases use the same not-found error shape to avoid resource enumeration.
+
+The adapter is deliberately not wired as persistence and is not a server security boundary. `docs/architecture/repository-adapters.md` records the contract that a future PostgreSQL repository must preserve, including indexed tenant predicates, organization policy checks, classification filters, transactions, and concurrency controls.
