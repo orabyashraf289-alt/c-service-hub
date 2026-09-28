@@ -28,3 +28,9 @@ Both routes use the same domain cases, locale helper, Arabic translations, previ
 Case Workspace now includes localized Activity, Attachments, and Approvals tabs. Activity keeps the current timeline and reply affordance; Attachments and Approvals provide explicit, useful preview states until storage and approval APIs exist.
 
 Administration now has a dedicated route with tenant configuration, organization hierarchy, service catalog, workflow controls, SLA policies, team roles, and audit readiness. The screen is intentionally a safe read-oriented preview: mutation actions surface the next API/permissions phase rather than pretending to persist changes.
+
+## 12. Incremental delivery: visual Workflow Builder
+
+Automation now has a dedicated `/automation` route with a visual incident-priority workflow canvas. The slice supports selectable trigger, condition, action, and approval nodes; an inspector for the selected rule; draft publishing feedback; add/remove step interactions; guardrail messaging; and linked SLA context.
+
+The builder remains a frontend preview by design. Publishing is represented as a reversible local state and toast until workflow persistence, permission checks, versioning, and audit events are backed by the API layer.

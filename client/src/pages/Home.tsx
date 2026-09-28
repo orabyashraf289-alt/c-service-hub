@@ -164,6 +164,10 @@ export default function Home() {
       setLocation("/cases");
       return;
     }
+    if (name === "Automation") {
+      setLocation("/automation");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 

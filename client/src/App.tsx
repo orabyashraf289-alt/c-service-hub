@@ -6,6 +6,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import CaseWorkspace from "./pages/CaseWorkspace";
 import Administration from "./pages/Administration";
 import ExperienceWorkspace from "./pages/ExperienceWorkspace";
+import WorkflowBuilder from "./pages/WorkflowBuilder";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/portal">{() => <ExperienceWorkspace mode="customer" />}</Route>
       <Route path="/agent">{() => <ExperienceWorkspace mode="agent" />}</Route>
       <Route path="/admin" component={Administration} />
+      <Route path="/automation" component={WorkflowBuilder} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
