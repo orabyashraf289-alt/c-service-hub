@@ -34,3 +34,26 @@ Administration now has a dedicated route with tenant configuration, organization
 Automation now has a dedicated `/automation` route with a visual incident-priority workflow canvas. The slice supports selectable trigger, condition, action, and approval nodes; an inspector for the selected rule; draft publishing feedback; add/remove step interactions; guardrail messaging; and linked SLA context.
 
 The builder remains a frontend preview by design. Publishing is represented as a reversible local state and toast until workflow persistence, permission checks, versioning, and audit events are backed by the API layer.
+
+## 13. Phase 0 discovery and architecture baseline
+
+The attached enterprise brief required a formal discovery pass before adding more product screens. Phase 0 is now documented in:
+
+- `docs/architecture/current-state.md`
+- `docs/architecture/target-architecture.md`
+- `docs/architecture/domain-map.md`
+- `docs/roadmap/implementation-roadmap.md`
+
+The findings confirm that the current repository is a strong bilingual frontend prototype with navigable vertical slices, but it does not yet contain backend persistence, identity, authorization, tenant isolation, database models, API contracts, workers, search, storage, notifications, or CI/CD. The roadmap therefore prioritizes platform foundation and security boundaries before replacing preview adapters with live data.
+
+### Completed
+
+Repository and frontend module inventory, backend boundary review, localization review, authentication/authorization review, testing and CI/CD review, reusable-component inventory, technical-debt register, target architecture, domain map, and phased implementation roadmap.
+
+### Risks
+
+The largest risks are treating preview interactions as real persistence, building additional screens before tenant and permission boundaries exist, and allowing localization to remain a helper instead of a complete message/formatting contract. These are recorded as explicit exit criteria in the roadmap.
+
+### Recommended next step
+
+Begin Phase 1 with backend/module scaffolding, environment validation, API/error conventions, database migration tooling, outbox/audit contracts, and automated tests while preserving the current UI as the reference surface.
