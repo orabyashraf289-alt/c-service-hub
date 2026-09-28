@@ -57,3 +57,11 @@ The largest risks are treating preview interactions as real persistence, buildin
 ### Recommended next step
 
 Begin Phase 1 with backend/module scaffolding, environment validation, API/error conventions, database migration tooling, outbox/audit contracts, and automated tests while preserving the current UI as the reference surface.
+
+## 14. Phase 1 foundation: contracts and security baseline
+
+The first Phase 1 slice adds a typed platform boundary without pretending that a backend exists. `client/src/platform/` now defines tenant/request context, API success and failure envelopes, cursor pagination, case summaries, workflow versions, audit events, stable API error handling, and preview-safe permission/tenant-scope helpers.
+
+The supporting architecture documents are now available at `docs/architecture/api-contracts.md`, `docs/architecture/data-model.md`, and `docs/architecture/security-model.md`. They define the contract and guardrails for the future modular monolith, PostgreSQL migrations, tenant isolation, audit stream, outbox, attachment security, and authorization pipeline. The existing domain export boundary was intentionally left unchanged after validation to avoid coupling platform contracts to presentation-domain inference.
+
+This remains a foundation contract only. No authentication, database, API endpoint, permission enforcement, or persistence claim is made in the static project.
