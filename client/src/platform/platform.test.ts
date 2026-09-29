@@ -12,7 +12,7 @@ const context: TenantContext = {
   userId: "user-sarah",
   locale: "en",
   timezone: "Asia/Riyadh",
-  permissions: ["cases.read", "workflow.read"],
+  permissions: ["cases.read", "workflow.read", "queues.read"],
   securityClassification: "internal",
 };
 
@@ -108,5 +108,17 @@ describe("workflow and SLA repository contracts", () => {
     const allowed = await repository.list({ ...context, permissions: ["sla.read"] });
     expect(allowed.ok).toBe(true);
     if (allowed.ok) expect(allowed.data.map((item) => item.id)).toEqual(["sla-1"]);
+  });
+
+  it("returns only queues inside the active tenant and requires queue permission", async () => {
+    const queueRepository = new InMemoryOrchestrationRepository([], [], [
+      { id: "queue-1", tenantId: "tenant-classera", name: "Product", description: "Product support", owner: "Nadia K.", openCases: 12, health: "healthy", routingRule: "Service = LMS" },
+      { id: "queue-other", tenantId: "tenant-other", name: "Other", description: "Other tenant", owner: "Other", openCases: 4, health: "watch", routingRule: "Priority = P2" },
+    ]);
+    const result = await queueRepository.listQueues(context);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["queue-1"]);
+    const denied = await queueRepository.listQueues({ ...context, permissions: [] });
+    expect(denied).toMatchObject({ ok: false, error: { code: "QUEUES_FORBIDDEN" } });
   });
 });

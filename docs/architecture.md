@@ -95,3 +95,9 @@ The automation route was smoke-tested after the integration. The full contract s
 Added a dedicated bilingual `/sla` workspace backed by the tenant-scoped SLA repository contract. The page renders active policy cards, first-response/escalation/resolution timers, a P1 escalation window, loading state, empty state, and an explicit permission-denied state using the shared `StateNotice` primitive. A permission-preview control makes the negative path demonstrable without claiming real authentication.
 
 The dashboard SLA navigation now routes to this workspace. The browser smoke check verified normal policy rendering and the permission-denied state. The static implementation remains preview-only; policy creation and editing are intentionally surfaced as next-phase API actions.
+
+## 20. Phase 1 foundation: queues and routing workspace
+
+Added a bilingual `/queues` workspace backed by a tenant-scoped `QueueRepository` preview contract. The page presents queue health, open workload, ownership, active routing rules, and at-risk queues, with loading, empty, and permission-denied states. Dashboard navigation now routes `Queues & routing` to the workspace, and the page supports English/Arabic RTL switching.
+
+The platform contract suite now includes a queue isolation and permission test. Browser smoke checks verified normal queue rendering, permission denial, and Arabic RTL labels. Queue creation and routing edits remain preview actions pending the API persistence phase.

@@ -172,6 +172,10 @@ export default function Home() {
       setLocation("/sla");
       return;
     }
+    if (name === "Queues & routing") {
+      setLocation("/queues");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 
