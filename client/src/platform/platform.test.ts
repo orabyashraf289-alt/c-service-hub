@@ -12,7 +12,7 @@ const context: TenantContext = {
   userId: "user-sarah",
   locale: "en",
   timezone: "Asia/Riyadh",
-  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read"],
+  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read", "knowledge.read"],
   securityClassification: "internal",
 };
 
@@ -132,5 +132,17 @@ describe("workflow and SLA repository contracts", () => {
     if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["service-1"]);
     const denied = await catalogRepository.listServices({ ...context, permissions: [] });
     expect(denied).toMatchObject({ ok: false, error: { code: "CATALOG_FORBIDDEN" } });
+  });
+
+  it("returns only knowledge articles inside the active tenant and requires knowledge permission", async () => {
+    const knowledgeRepository = new InMemoryOrchestrationRepository([], [], [], [], [
+      { id: "article-1", tenantId: "tenant-classera", title: "SSO fix", summary: "Known fix", category: "Known fixes", status: "published", owner: "Hala", updatedAt: "Today", helpfulRate: 94, linkedService: "Identity" },
+      { id: "article-other", tenantId: "tenant-other", title: "Other", summary: "Other tenant", category: "Runbooks", status: "draft", owner: "Other", updatedAt: "Today", helpfulRate: 0, linkedService: "Other" },
+    ]);
+    const result = await knowledgeRepository.listArticles(context);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["article-1"]);
+    const denied = await knowledgeRepository.listArticles({ ...context, permissions: [] });
+    expect(denied).toMatchObject({ ok: false, error: { code: "KNOWLEDGE_FORBIDDEN" } });
   });
 });

@@ -113,3 +113,9 @@ The platform contract suite now includes service-definition tenant isolation and
 The Service Catalog checkpoint exposed a stylesheet regression caused by a truncated `client/src/index.css` snapshot. The full global stylesheet was recovered from the preceding Queues checkpoint and the Catalog styles were re-applied on top. The root dashboard is now visually restored, while the Catalog route remains styled.
 
 Final verification after recovery: 13 Vitest tests pass, TypeScript passes, production build passes, and the root dashboard renders with the complete sidebar, KPI, pulse, queue, case, and bilingual interaction system.
+
+## 23. Phase 1 foundation: knowledge base workspace
+
+Added a bilingual `/knowledge` workspace backed by a tenant-scoped `KnowledgeRepository` preview contract. The page presents searchable articles, category filters, publication status, linked service, helpful rate, owner, update time, and an approval-aware detail panel. It includes loading, empty-result, and permission-denied states, Arabic RTL switching, and dashboard navigation.
+
+The platform contract suite now includes knowledge article tenant isolation and `knowledge.read` permission coverage. Browser smoke checks verified article rendering, permission denial, and Arabic labels. Article creation and editing remain preview actions pending API persistence.

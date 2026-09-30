@@ -34,12 +34,29 @@ export type ServiceDefinition = {
   healthScore: number;
 };
 
+export type KnowledgeArticle = {
+  id: string;
+  tenantId: string;
+  title: string;
+  summary: string;
+  category: string;
+  status: "published" | "review" | "draft";
+  owner: string;
+  updatedAt: string;
+  helpfulRate: number;
+  linkedService: string;
+};
+
 export interface QueueRepository {
   listQueues(context: TenantContext): Promise<ApiResult<QueueDefinition[]>>;
 }
 
 export interface ServiceCatalogRepository {
   listServices(context: TenantContext): Promise<ApiResult<ServiceDefinition[]>>;
+}
+
+export interface KnowledgeRepository {
+  listArticles(context: TenantContext): Promise<ApiResult<KnowledgeArticle[]>>;
 }
 
 export interface WorkflowRepository {
@@ -50,8 +67,8 @@ export interface SlaRepository {
   list(context: TenantContext): Promise<ApiResult<SlaPolicy[]>>;
 }
 
-export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaRepository, QueueRepository, ServiceCatalogRepository {
-  constructor(private readonly workflows: WorkflowVersion[], private readonly policies: SlaPolicy[], private readonly queues: QueueDefinition[] = [], private readonly services: ServiceDefinition[] = []) {}
+export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaRepository, QueueRepository, ServiceCatalogRepository, KnowledgeRepository {
+  constructor(private readonly workflows: WorkflowVersion[], private readonly policies: SlaPolicy[], private readonly queues: QueueDefinition[] = [], private readonly services: ServiceDefinition[] = [], private readonly articles: KnowledgeArticle[] = []) {}
 
   async listPublished(context: TenantContext): Promise<ApiResult<WorkflowVersion[]>> {
     const items = this.workflows.filter((item) => item.tenantId === context.tenantId && item.status === "published");
@@ -71,5 +88,10 @@ export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaR
   async listServices(context: TenantContext): Promise<ApiResult<ServiceDefinition[]>> {
     if (!context.permissions.includes("catalog.read")) return failureResult(context.locale, "CATALOG_FORBIDDEN", "errors.catalog.forbidden");
     return { ok: true, data: this.services.filter((item) => item.tenantId === context.tenantId), meta: createApiMeta(context.locale) };
+  }
+
+  async listArticles(context: TenantContext): Promise<ApiResult<KnowledgeArticle[]>> {
+    if (!context.permissions.includes("knowledge.read")) return failureResult(context.locale, "KNOWLEDGE_FORBIDDEN", "errors.knowledge.forbidden");
+    return { ok: true, data: this.articles.filter((item) => item.tenantId === context.tenantId), meta: createApiMeta(context.locale) };
   }
 }

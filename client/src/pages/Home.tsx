@@ -180,6 +180,10 @@ export default function Home() {
       setLocation("/catalog");
       return;
     }
+    if (name === "Knowledge base") {
+      setLocation("/knowledge");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 
