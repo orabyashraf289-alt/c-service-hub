@@ -9,6 +9,7 @@ import ExperienceWorkspace from "./pages/ExperienceWorkspace";
 import WorkflowBuilder from "./pages/WorkflowBuilder";
 import SlaWorkspace from "./pages/SlaWorkspace";
 import QueuesWorkspace from "./pages/QueuesWorkspace";
+import ServiceCatalog from "./pages/ServiceCatalog";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/automation" component={WorkflowBuilder} />
       <Route path="/sla" component={SlaWorkspace} />
       <Route path="/queues" component={QueuesWorkspace} />
+      <Route path="/catalog" component={ServiceCatalog} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

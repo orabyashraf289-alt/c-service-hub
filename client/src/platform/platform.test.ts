@@ -12,7 +12,7 @@ const context: TenantContext = {
   userId: "user-sarah",
   locale: "en",
   timezone: "Asia/Riyadh",
-  permissions: ["cases.read", "workflow.read", "queues.read"],
+  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read"],
   securityClassification: "internal",
 };
 
@@ -120,5 +120,17 @@ describe("workflow and SLA repository contracts", () => {
     if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["queue-1"]);
     const denied = await queueRepository.listQueues({ ...context, permissions: [] });
     expect(denied).toMatchObject({ ok: false, error: { code: "QUEUES_FORBIDDEN" } });
+  });
+
+  it("returns only service definitions inside the active tenant and requires catalog permission", async () => {
+    const catalogRepository = new InMemoryOrchestrationRepository([], [], [], [
+      { id: "service-1", tenantId: "tenant-classera", name: "LMS", description: "Product support", category: "Product", owner: "Nadia", status: "available", requestCount: 8, healthScore: 95 },
+      { id: "service-other", tenantId: "tenant-other", name: "Other", description: "Other tenant", category: "Product", owner: "Other", status: "available", requestCount: 2, healthScore: 80 },
+    ]);
+    const result = await catalogRepository.listServices(context);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["service-1"]);
+    const denied = await catalogRepository.listServices({ ...context, permissions: [] });
+    expect(denied).toMatchObject({ ok: false, error: { code: "CATALOG_FORBIDDEN" } });
   });
 });

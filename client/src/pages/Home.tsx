@@ -176,6 +176,10 @@ export default function Home() {
       setLocation("/queues");
       return;
     }
+    if (name === "Service catalog") {
+      setLocation("/catalog");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 

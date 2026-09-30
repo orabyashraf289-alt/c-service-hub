@@ -101,3 +101,9 @@ The dashboard SLA navigation now routes to this workspace. The browser smoke che
 Added a bilingual `/queues` workspace backed by a tenant-scoped `QueueRepository` preview contract. The page presents queue health, open workload, ownership, active routing rules, and at-risk queues, with loading, empty, and permission-denied states. Dashboard navigation now routes `Queues & routing` to the workspace, and the page supports English/Arabic RTL switching.
 
 The platform contract suite now includes a queue isolation and permission test. Browser smoke checks verified normal queue rendering, permission denial, and Arabic RTL labels. Queue creation and routing edits remain preview actions pending the API persistence phase.
+
+## 21. Phase 1 foundation: service catalog workspace
+
+Added a bilingual `/catalog` workspace backed by a tenant-scoped `ServiceCatalogRepository` preview contract. The page presents service definitions, categories, search, availability status, health score, owner, and customer-facing catalog guidance. It includes loading, empty-result, and permission-denied states, plus Arabic RTL switching and dashboard navigation.
+
+The platform contract suite now includes service-definition tenant isolation and `catalog.read` permission coverage. Browser smoke checks verified full catalog rendering, search filtering, permission denial, and Arabic labels. Service creation/editing remains a preview action pending the API persistence phase.
