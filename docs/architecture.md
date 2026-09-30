@@ -107,3 +107,9 @@ The platform contract suite now includes a queue isolation and permission test. 
 Added a bilingual `/catalog` workspace backed by a tenant-scoped `ServiceCatalogRepository` preview contract. The page presents service definitions, categories, search, availability status, health score, owner, and customer-facing catalog guidance. It includes loading, empty-result, and permission-denied states, plus Arabic RTL switching and dashboard navigation.
 
 The platform contract suite now includes service-definition tenant isolation and `catalog.read` permission coverage. Browser smoke checks verified full catalog rendering, search filtering, permission denial, and Arabic labels. Service creation/editing remains a preview action pending the API persistence phase.
+
+## 22. Final verification: global stylesheet recovery
+
+The Service Catalog checkpoint exposed a stylesheet regression caused by a truncated `client/src/index.css` snapshot. The full global stylesheet was recovered from the preceding Queues checkpoint and the Catalog styles were re-applied on top. The root dashboard is now visually restored, while the Catalog route remains styled.
+
+Final verification after recovery: 13 Vitest tests pass, TypeScript passes, production build passes, and the root dashboard renders with the complete sidebar, KPI, pulse, queue, case, and bilingual interaction system.
