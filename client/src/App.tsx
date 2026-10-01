@@ -11,6 +11,7 @@ import SlaWorkspace from "./pages/SlaWorkspace";
 import QueuesWorkspace from "./pages/QueuesWorkspace";
 import ServiceCatalog from "./pages/ServiceCatalog";
 import KnowledgeBase from "./pages/KnowledgeBase";
+import OrganizationsWorkspace from "./pages/OrganizationsWorkspace";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/queues" component={QueuesWorkspace} />
       <Route path="/catalog" component={ServiceCatalog} />
       <Route path="/knowledge" component={KnowledgeBase} />
+      <Route path="/organizations" component={OrganizationsWorkspace} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

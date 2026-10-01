@@ -184,6 +184,10 @@ export default function Home() {
       setLocation("/knowledge");
       return;
     }
+    if (name === "Organizations") {
+      setLocation("/organizations");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 

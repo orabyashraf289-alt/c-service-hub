@@ -12,7 +12,7 @@ const context: TenantContext = {
   userId: "user-sarah",
   locale: "en",
   timezone: "Asia/Riyadh",
-  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read", "knowledge.read"],
+  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read", "knowledge.read", "organizations.read"],
   securityClassification: "internal",
 };
 
@@ -144,5 +144,17 @@ describe("workflow and SLA repository contracts", () => {
     if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["article-1"]);
     const denied = await knowledgeRepository.listArticles({ ...context, permissions: [] });
     expect(denied).toMatchObject({ ok: false, error: { code: "KNOWLEDGE_FORBIDDEN" } });
+  });
+
+  it("returns only organizations inside the active tenant and requires organization permission", async () => {
+    const organizationRepository = new InMemoryOrchestrationRepository([], [], [], [], [], [
+      { id: "org-1", tenantId: "tenant-classera", name: "Classera", sector: "Education", region: "Riyadh", members: 12, openCases: 2, healthScore: 96, status: "active" },
+      { id: "org-other", tenantId: "tenant-other", name: "Other", sector: "Education", region: "Dubai", members: 4, openCases: 1, healthScore: 80, status: "watch" },
+    ]);
+    const result = await organizationRepository.listOrganizations(context);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["org-1"]);
+    const denied = await organizationRepository.listOrganizations({ ...context, permissions: [] });
+    expect(denied).toMatchObject({ ok: false, error: { code: "ORGANIZATIONS_FORBIDDEN" } });
   });
 });

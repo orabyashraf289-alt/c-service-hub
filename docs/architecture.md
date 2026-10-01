@@ -119,3 +119,9 @@ Final verification after recovery: 13 Vitest tests pass, TypeScript passes, prod
 Added a bilingual `/knowledge` workspace backed by a tenant-scoped `KnowledgeRepository` preview contract. The page presents searchable articles, category filters, publication status, linked service, helpful rate, owner, update time, and an approval-aware detail panel. It includes loading, empty-result, and permission-denied states, Arabic RTL switching, and dashboard navigation.
 
 The platform contract suite now includes knowledge article tenant isolation and `knowledge.read` permission coverage. Browser smoke checks verified article rendering, permission denial, and Arabic labels. Article creation and editing remain preview actions pending API persistence.
+
+## 24. Phase 1 foundation: organizations workspace
+
+Added a bilingual `/organizations` workspace backed by a tenant-scoped `OrganizationRepository` preview contract. The page presents organization cards, sectors, regions, member counts, open cases, health score, status, filters, and access-boundary guidance. It includes loading, empty-result, and permission-denied states, Arabic RTL switching, and dashboard navigation.
+
+The platform contract suite now includes organization tenant isolation and `organizations.read` permission coverage. Browser smoke checks verified organization rendering, permission denial, and Arabic labels. Organization creation and access management remain preview actions pending API persistence.

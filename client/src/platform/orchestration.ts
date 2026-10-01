@@ -47,6 +47,18 @@ export type KnowledgeArticle = {
   linkedService: string;
 };
 
+export type OrganizationDefinition = {
+  id: string;
+  tenantId: string;
+  name: string;
+  sector: string;
+  region: string;
+  members: number;
+  openCases: number;
+  healthScore: number;
+  status: "active" | "watch" | "onboarding";
+};
+
 export interface QueueRepository {
   listQueues(context: TenantContext): Promise<ApiResult<QueueDefinition[]>>;
 }
@@ -59,6 +71,10 @@ export interface KnowledgeRepository {
   listArticles(context: TenantContext): Promise<ApiResult<KnowledgeArticle[]>>;
 }
 
+export interface OrganizationRepository {
+  listOrganizations(context: TenantContext): Promise<ApiResult<OrganizationDefinition[]>>;
+}
+
 export interface WorkflowRepository {
   listPublished(context: TenantContext): Promise<ApiResult<WorkflowVersion[]>>;
 }
@@ -67,8 +83,8 @@ export interface SlaRepository {
   list(context: TenantContext): Promise<ApiResult<SlaPolicy[]>>;
 }
 
-export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaRepository, QueueRepository, ServiceCatalogRepository, KnowledgeRepository {
-  constructor(private readonly workflows: WorkflowVersion[], private readonly policies: SlaPolicy[], private readonly queues: QueueDefinition[] = [], private readonly services: ServiceDefinition[] = [], private readonly articles: KnowledgeArticle[] = []) {}
+export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaRepository, QueueRepository, ServiceCatalogRepository, KnowledgeRepository, OrganizationRepository {
+  constructor(private readonly workflows: WorkflowVersion[], private readonly policies: SlaPolicy[], private readonly queues: QueueDefinition[] = [], private readonly services: ServiceDefinition[] = [], private readonly articles: KnowledgeArticle[] = [], private readonly organizations: OrganizationDefinition[] = []) {}
 
   async listPublished(context: TenantContext): Promise<ApiResult<WorkflowVersion[]>> {
     const items = this.workflows.filter((item) => item.tenantId === context.tenantId && item.status === "published");
@@ -93,5 +109,10 @@ export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaR
   async listArticles(context: TenantContext): Promise<ApiResult<KnowledgeArticle[]>> {
     if (!context.permissions.includes("knowledge.read")) return failureResult(context.locale, "KNOWLEDGE_FORBIDDEN", "errors.knowledge.forbidden");
     return { ok: true, data: this.articles.filter((item) => item.tenantId === context.tenantId), meta: createApiMeta(context.locale) };
+  }
+
+  async listOrganizations(context: TenantContext): Promise<ApiResult<OrganizationDefinition[]>> {
+    if (!context.permissions.includes("organizations.read")) return failureResult(context.locale, "ORGANIZATIONS_FORBIDDEN", "errors.organizations.forbidden");
+    return { ok: true, data: this.organizations.filter((item) => item.tenantId === context.tenantId), meta: createApiMeta(context.locale) };
   }
 }
