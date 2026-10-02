@@ -131,3 +131,9 @@ The platform contract suite now includes organization tenant isolation and `orga
 Added a bilingual `/team` workspace backed by a tenant-scoped `TeamRepository` preview contract. The page presents member cards, roles, access status, MFA coverage, assigned cases, last activity, role filters, and member detail guidance. It includes loading, empty-result, and permission-denied states, Arabic RTL switching, and dashboard navigation.
 
 The platform contract suite now includes team-member tenant isolation and `team.read` permission coverage. Browser smoke checks verified member rendering, permission denial, and Arabic labels. Invitations and role changes remain preview actions pending API persistence and audit integration.
+
+## 26. Phase 1 foundation: audit log workspace
+
+Added a bilingual `/audit` workspace backed by a tenant-scoped `AuditRepository` preview contract. The page supports searchable append-only activity, severity and resource filters, event detail inspection, export placeholders, immutable-event guidance, loading/empty/permission states, Arabic RTL switching, and responsive mobile layout.
+
+Added `AuditLogEvent` preview records with actor, resource, severity, timestamp, request-origin metadata, and summary fields. The contract filters by tenant and requires `audit.read`; the existing platform `AuditEvent` domain contract remains distinct for future API persistence mapping. Added tenant-isolation and permission-denial tests. Mutating retention, export, and related-event workflows remain intentionally deferred to the persistence/API phase.

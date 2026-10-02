@@ -170,3 +170,21 @@ describe("workflow and SLA repository contracts", () => {
     expect(denied).toMatchObject({ ok: false, error: { code: "TEAM_FORBIDDEN" } });
   });
 });
+
+describe("audit log repository contract", () => {
+  const auditRepository = new InMemoryOrchestrationRepository([], [], [], [], [], [], [], [
+    { id: "audit-1", tenantId: "tenant-classera", action: "case.updated", actor: "Sarah", actorEmail: "sarah@classera.com", resource: "INC-1", resourceType: "Case", timestamp: "2026-09-28T08:00:00Z", severity: "info", ipAddress: "10.0.0.1", summary: "Priority changed" },
+    { id: "audit-other", tenantId: "tenant-other", action: "case.updated", actor: "Other", actorEmail: "other@example.com", resource: "INC-9", resourceType: "Case", timestamp: "2026-09-28T08:00:00Z", severity: "critical", ipAddress: "10.0.0.9", summary: "Other tenant event" },
+  ]);
+
+  it("returns only audit events inside the active tenant", async () => {
+    const result = await auditRepository.listAuditEvents({ ...context, permissions: [...context.permissions, "audit.read"] });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["audit-1"]);
+  });
+
+  it("requires audit permission", async () => {
+    const denied = await auditRepository.listAuditEvents({ ...context, permissions: [] });
+    expect(denied).toMatchObject({ ok: false, error: { code: "AUDIT_FORBIDDEN", messageKey: "errors.audit.forbidden" } });
+  });
+});

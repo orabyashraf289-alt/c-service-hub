@@ -71,6 +71,20 @@ export type TeamMember = {
   mfaEnabled: boolean;
 };
 
+export type AuditLogEvent = {
+  id: string;
+  tenantId: string;
+  action: string;
+  actor: string;
+  actorEmail: string;
+  resource: string;
+  resourceType: string;
+  timestamp: string;
+  severity: "info" | "success" | "warning" | "critical";
+  ipAddress: string;
+  summary: string;
+};
+
 export interface QueueRepository {
   listQueues(context: TenantContext): Promise<ApiResult<QueueDefinition[]>>;
 }
@@ -91,6 +105,10 @@ export interface TeamRepository {
   listMembers(context: TenantContext): Promise<ApiResult<TeamMember[]>>;
 }
 
+export interface AuditRepository {
+  listAuditEvents(context: TenantContext): Promise<ApiResult<AuditLogEvent[]>>;
+}
+
 export interface WorkflowRepository {
   listPublished(context: TenantContext): Promise<ApiResult<WorkflowVersion[]>>;
 }
@@ -99,8 +117,8 @@ export interface SlaRepository {
   list(context: TenantContext): Promise<ApiResult<SlaPolicy[]>>;
 }
 
-export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaRepository, QueueRepository, ServiceCatalogRepository, KnowledgeRepository, OrganizationRepository, TeamRepository {
-  constructor(private readonly workflows: WorkflowVersion[], private readonly policies: SlaPolicy[], private readonly queues: QueueDefinition[] = [], private readonly services: ServiceDefinition[] = [], private readonly articles: KnowledgeArticle[] = [], private readonly organizations: OrganizationDefinition[] = [], private readonly members: TeamMember[] = []) {}
+export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaRepository, QueueRepository, ServiceCatalogRepository, KnowledgeRepository, OrganizationRepository, TeamRepository, AuditRepository {
+  constructor(private readonly workflows: WorkflowVersion[], private readonly policies: SlaPolicy[], private readonly queues: QueueDefinition[] = [], private readonly services: ServiceDefinition[] = [], private readonly articles: KnowledgeArticle[] = [], private readonly organizations: OrganizationDefinition[] = [], private readonly members: TeamMember[] = [], private readonly auditEvents: AuditLogEvent[] = []) {}
 
   async listPublished(context: TenantContext): Promise<ApiResult<WorkflowVersion[]>> {
     const items = this.workflows.filter((item) => item.tenantId === context.tenantId && item.status === "published");
@@ -135,5 +153,10 @@ export class InMemoryOrchestrationRepository implements WorkflowRepository, SlaR
   async listMembers(context: TenantContext): Promise<ApiResult<TeamMember[]>> {
     if (!context.permissions.includes("team.read")) return failureResult(context.locale, "TEAM_FORBIDDEN", "errors.team.forbidden");
     return { ok: true, data: this.members.filter((item) => item.tenantId === context.tenantId), meta: createApiMeta(context.locale) };
+  }
+
+  async listAuditEvents(context: TenantContext): Promise<ApiResult<AuditLogEvent[]>> {
+    if (!context.permissions.includes("audit.read")) return failureResult(context.locale, "AUDIT_FORBIDDEN", "errors.audit.forbidden");
+    return { ok: true, data: this.auditEvents.filter((item) => item.tenantId === context.tenantId), meta: createApiMeta(context.locale) };
   }
 }

@@ -192,6 +192,10 @@ export default function Home() {
       setLocation("/team");
       return;
     }
+    if (name === "Audit log") {
+      setLocation("/audit");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 
