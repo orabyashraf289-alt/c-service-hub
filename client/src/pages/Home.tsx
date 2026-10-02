@@ -188,6 +188,10 @@ export default function Home() {
       setLocation("/organizations");
       return;
     }
+    if (name === "Team & access") {
+      setLocation("/team");
+      return;
+    }
     if (name !== "Overview") toast(`${name} is ready in the next workspace view.`);
   };
 

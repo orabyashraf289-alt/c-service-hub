@@ -125,3 +125,9 @@ The platform contract suite now includes knowledge article tenant isolation and 
 Added a bilingual `/organizations` workspace backed by a tenant-scoped `OrganizationRepository` preview contract. The page presents organization cards, sectors, regions, member counts, open cases, health score, status, filters, and access-boundary guidance. It includes loading, empty-result, and permission-denied states, Arabic RTL switching, and dashboard navigation.
 
 The platform contract suite now includes organization tenant isolation and `organizations.read` permission coverage. Browser smoke checks verified organization rendering, permission denial, and Arabic labels. Organization creation and access management remain preview actions pending API persistence.
+
+## 25. Phase 1 foundation: team and access workspace
+
+Added a bilingual `/team` workspace backed by a tenant-scoped `TeamRepository` preview contract. The page presents member cards, roles, access status, MFA coverage, assigned cases, last activity, role filters, and member detail guidance. It includes loading, empty-result, and permission-denied states, Arabic RTL switching, and dashboard navigation.
+
+The platform contract suite now includes team-member tenant isolation and `team.read` permission coverage. Browser smoke checks verified member rendering, permission denial, and Arabic labels. Invitations and role changes remain preview actions pending API persistence and audit integration.

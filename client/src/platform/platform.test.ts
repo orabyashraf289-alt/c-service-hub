@@ -12,7 +12,7 @@ const context: TenantContext = {
   userId: "user-sarah",
   locale: "en",
   timezone: "Asia/Riyadh",
-  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read", "knowledge.read", "organizations.read"],
+  permissions: ["cases.read", "workflow.read", "queues.read", "catalog.read", "knowledge.read", "organizations.read", "team.read"],
   securityClassification: "internal",
 };
 
@@ -156,5 +156,17 @@ describe("workflow and SLA repository contracts", () => {
     if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["org-1"]);
     const denied = await organizationRepository.listOrganizations({ ...context, permissions: [] });
     expect(denied).toMatchObject({ ok: false, error: { code: "ORGANIZATIONS_FORBIDDEN" } });
+  });
+
+  it("returns only team members inside the active tenant and requires team permission", async () => {
+    const teamRepository = new InMemoryOrchestrationRepository([], [], [], [], [], [], [
+      { id: "member-1", tenantId: "tenant-classera", name: "Sarah", email: "sarah@classera.com", role: "admin", status: "active", lastActive: "Now", assignedCases: 4, mfaEnabled: true },
+      { id: "member-other", tenantId: "tenant-other", name: "Other", email: "other@example.com", role: "viewer", status: "active", lastActive: "Yesterday", assignedCases: 1, mfaEnabled: false },
+    ]);
+    const result = await teamRepository.listMembers(context);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.map((item) => item.id)).toEqual(["member-1"]);
+    const denied = await teamRepository.listMembers({ ...context, permissions: [] });
+    expect(denied).toMatchObject({ ok: false, error: { code: "TEAM_FORBIDDEN" } });
   });
 });
